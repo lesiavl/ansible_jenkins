@@ -1,0 +1,55 @@
+---
+
+- hosts: "{{ host }}"
+
+- name: Install list of packages
+  user: root
+  apt: name={{ item }} state=installed
+  with_items: 
+  - wget
+  - unzip 
+  - python-minimal
+  - python2.7-dev
+  - python2-pip
+  - git 
+  - gcc
+  - libyaml-dev
+  - libjpeg-dev
+  - libz-dev
+  - libgconf-2-4 
+  - openjdk-8-jre 
+  - Xvfb
+  - chromium-browser
+
+- name: Install chromedriver
+  command: chdir=/usr/local/bin '{{ item }}' 
+  with_items:
+    - wget -N http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
+    - unzip chromedriver_linux64.zip
+    - chmod +x chromedriver
+    - ln -s /usr/local/bin/chromedriver /usr/bin/chromedriver
+
+- name: Install firefox browser and driver
+  command: chdir=/usr/local/bin '{{ item }}' 
+  with_items:
+    - wget -N http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/45.0/linux-x86_64/en-US/firefox-45.0.tar.bz2
+    - tar -xjvf firefox-45.0.tar.bz2 
+    - mv firefox /usr/local/bin/firefox45
+    - ln -sf /usr/local/bin/firefox45/firefox /usr/bin/firefox
+    - wget -N https://github.com/mozilla/geckodriver/releases/download/v0.16.1/geckodriver-v0.16.1-linux64.tar.gz
+    - tar -xvzf geckodriver-v0.16.1-linux64.tar.gz
+    - chmod +x geckodriver
+    - mv -f geckodriver /usr/local/bin/geckodriver
+    - ln -s /usr/local/bin/geckodriver /usr/bin/geckodriver
+
+- name: Install pip packages
+  pip:
+    name: {{item}} 
+    version: {{item_version}} 
+    executable: pip-2
+  with_items:
+    - name: selenium
+      version: 2.53
+    - name: robotframework
+    - name: robotframework-selenium2library 
+    - name: haversine
