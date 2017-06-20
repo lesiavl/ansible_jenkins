@@ -1,0 +1,45 @@
+---
+
+- name: Install list of packages
+  apt: pkg={{ item }} state=present
+  with_items: 
+  - python-minimal
+  - python2.7-dev
+  - git 
+  - gcc
+  - libyaml-dev
+  - libjpeg-dev
+  - libz-dev
+  - libgconf-2-4 
+  - openjdk-8-jre 
+  - xvfb
+  - chromium-browser
+
+- name: Install pip
+  apt: pkg=python-pip state=present
+
+- name: Unarchive Chromedriver
+  unarchive: src=http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip dest=/usr/local/bin remote_src=True
+
+- name: Unarchive Firefox
+  unarchive: src=http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/45.0/linux-x86_64/en-US/firefox-45.0.tar.bz2 dest=/usr/local/bin remote_src=True
+
+- name: Unarchive Gecko
+  unarchive: src=https://github.com/mozilla/geckodriver/releases/download/v0.16.1/geckodriver-v0.16.1-linux64.tar.gz dest=/usr/local/bin remote_src=True
+
+- name: Changing permissions to Chromedriver
+  file: path=/usr/local/bin/chromedriver state=file mode=a+x
+
+- name: Changing permissions Geckodriver
+  file: path=/usr/local/bin/geckodriver state=file mode=a+x
+
+- name: Symbolic links chromedriver
+  file: src=/usr/local/bin/chromedriver dest=/usr/bin/chromedriver state=link
+
+- pip: name={{ item }} state=present
+  with_items:
+    - robotframework
+    - robotframework-selenium2library 
+    - haversine
+
+- pip: name=selenium version=2.53 state=present
